@@ -15,7 +15,7 @@ The workflow consists of interconnected components managed through a LangGraph s
   - **Gmail Agent:** Composes and saves clean email drafts or sends emails using context passed from earlier agents.
 - **Synthesizer Node:** Combines outputs from all executed agents into a clean, human-readable confirmation response.
 
-'''
+```
 User Prompt ──▶ Supervisor Node (Plans Agent Chain)
                       │
                       ▼
@@ -26,7 +26,7 @@ User Prompt ──▶ Supervisor Node (Plans Agent Chain)
                       │ No
                       ▼
                Synthesizer Node ──▶ Clean Plain-Text Output
-'''
+```
 
 ## Features
 - **Multi-Agent Chaining:** Handles multi-step requests in a single prompt (e.g., drafting notes, saving them to Google Docs, and preparing a Gmail draft with the document link).
