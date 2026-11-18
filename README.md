@@ -67,29 +67,3 @@ User Prompt ──▶ Supervisor Node (Plans Agent Chain)
 
 ## Contributing
 Contributions, suggestions, and improvements are welcome! Feel free to fork the repository and submit a Pull Request.
-
-```
-+-------------------------------------------------------------------------+
-|                        PRESENTATION LAYER (Web UI)                      |
-|      HTML5 / CSS3 / JavaScript  |  Chat Interface  |  Task History      |
-+------------------------------------+------------------------------------+
-                                     | HTTP POST (/api/chat) & GET (/api/tasks)
-                                     v
-+-------------------------------------------------------------------------+
-|                     API & ORCHESTRATION LAYER (Backend)                 |
-|  FastAPI Server (Uvicorn)  -->  LangGraph Stateful Workflow Engine      |
-|                                                                         |
-|   +-------------------+      +-------------------+      +------------+  |
-|   |  Supervisor Node  | ---> |  Specialist Node  | ---> | Synthesizer|  |
-|   | (Pydantic Plan)   |      | (Loop Execution)  |      |   Node     |  |
-|   +-------------------+      +---------+---------+      +------------+  |
-|                                        |                                |
-|                    [Shared AgentState: accumulated_context]             |
-+----------------------------------------+--------------------------------+
-                                         | Managed OAuth & Tool Calling
-                                         v
-+-------------------------------------------------------------------------+
-|                     EXTERNAL AI & WORKSPACE SERVICES                    |
-|   Groq API (openai/gpt-oss-120b)   |   Composio SDK (Docs/Cal/Gmail)    |
-+-------------------------------------------------------------------------+
-```
