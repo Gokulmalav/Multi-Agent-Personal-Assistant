@@ -126,9 +126,10 @@ def run_composio_tools(ai_msg):
 
 def supervisor_node(state: AgentState):
     """Analyzes user prompt and builds an ordered multi-agent execution plan."""
-    planner = llm.with_structured_output(ExecutionPlan)
     current_time = datetime.now().strftime("%A, %B %d, %Y at %I:%M %p")
-    
+    valid_agents = {"assistant", "gdocs", "gcalendar", "gmail"}
+    plan = ["assistant"]
+
     sys_msg = SystemMessage(content=f"""You are the Supervisor Orchestrator of a Multi-Agent Personal Assistant.
 Current Desktop Date & Time: {current_time}
 Available Specialist Agents:
@@ -139,10 +140,27 @@ Available Specialist Agents:
 
 Rules:
 - For casual chat, greetings ('hi', 'hello', 'kaise ho'), or general Q&A, return ONLY ['assistant'].
-- Always include at least one agent in agents_chain.""")
-    
-    decision = planner.invoke([sys_msg, state["messages"][0]])
-    plan = decision.agents_chain if decision.agents_chain else ["assistant"]
+- Always include at least one agent.
+- Output ONLY valid JSON in this exact format: {{"agents_chain": ["assistant"]}}""")
+
+    try:
+        response = llm.invoke([sys_msg, state["messages"][0]])
+        raw_text = response.content.strip()
+
+        json_match = re.search(r"\{.*?\}", raw_text, re.DOTALL)
+        if json_match:
+            parsed = json.loads(json_match.group())
+            extracted = [a for a in parsed.get("agents_chain", []) if a in valid_agents]
+            if extracted:
+                plan = extracted
+        else:
+            found = re.findall(r"\b(assistant|gdocs|gcalendar|gmail)\b", raw_text.lower())
+            if found:
+                plan = list(dict.fromkeys(found))
+    except Exception as e:
+        print(f"Supervisor fallback triggered: {e}")
+        plan = ["assistant"]
+
     return {
         "plan": plan,
         "current_step": 0,
